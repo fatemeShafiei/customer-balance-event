@@ -45,9 +45,9 @@ function getModel(sequelize) {
 function validateBalanceEvent(balanceEvent) {
     const schema = Joi.object({
         reason: Joi.string().min(5).max(50).required(),
-        reasonTime: Joi.date().required(),
+        reasonTime: Joi.number().min(1).required(),
         businessUnit: Joi.string().min(1).max(50).required(),
-        type: Joi.string().min(5).max(50).required(),
+        type: Joi.string().valid('INCREASED', 'DECREASED').required(),
         value: Joi.number().min(0).required(),
     });
 
