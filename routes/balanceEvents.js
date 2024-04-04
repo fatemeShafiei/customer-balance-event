@@ -3,6 +3,7 @@ const router = express.Router();
 const db = require("../models");
 const {validateBalanceEvent} = require('../models/balance_event.model');
 const moment = require("moment");
+const {error} = require("winston");
 
 const BalanceEvents = db.balanceEvents;
 const Op = require('sequelize').Op;
@@ -18,10 +19,10 @@ router.post('/:market/:customerId', async (req, res) => {
         market: req.params.market,
         customerId: req.params.customerId,
         reason: req.body.reason,
-        reasonTime: req.body.reasonTime,
+        reasonTime: moment(req.body.reasonTime).format("YYYY-MM-DD HH:mm:ss"),
         businessUnit: req.body.businessUnit,
         type: req.body.type,
-        value: req.body.value,
+        value: req.body.type=== "DECREASED" ? -req.body.value : req.body.value,
     };
 
     BalanceEvents.create(balanceEvent)
@@ -37,46 +38,45 @@ router.post('/:market/:customerId', async (req, res) => {
 });
 
 router.get('/:market/:customerId/:reason/:reasonTime', async (req, res) => {
-    const year = Number(req.params.reasonTime)-1;
+    const year = Number(req.params.reasonTime) - 1;
     const yearTimeStamp = calculateTimeStamp(year);
-    const nextYearTimeStamp = calculateTimeStamp(year+1);
+    const nextYearTimeStamp = calculateTimeStamp(year + 1);
     const condition = {
         market: req.params.market,
         customerId: req.params.customerId,
         reason: req.params.reason
     };
-    const conditionBeforeReasonYear = getConditionWithNewProperty(condition,"reasonTime", {
+    const conditionBeforeReasonYear = getConditionWithNewProperty(condition, "reasonTime", {
         [Op.lt]: yearTimeStamp
     })
-    const conditionDuringReasonYear = getConditionWithNewProperty(condition,"reasonTime", {
+    const conditionDuringReasonYear = getConditionWithNewProperty(condition, "reasonTime", {
         [Op.between]: [yearTimeStamp, nextYearTimeStamp]
     })
-    const openingBalance = await calculateBalance(conditionBeforeReasonYear)
-    const closingBalance = await calculateBalance(conditionDuringReasonYear)
-    res.send({
-        openingBalance,
-        closingBalance
-    })
+    const openingBalancePromise = sumValueOfBalances(conditionBeforeReasonYear)
+    const closingBalancePromise = sumValueOfBalances(conditionDuringReasonYear)
+    Promise.all([openingBalancePromise, closingBalancePromise])
+        .then(results => {
+            const openingBalance = results[0] ? results[0] : 0;
+            const closingBalance = results[0] + results[1];
+            res.send({
+                openingBalance,
+                closingBalance
+            })
+        });
+
 });
-async function calculateBalance(condition) {
-    const valueOfIncreasedType = await calculateBalanceWithCertainType(condition, 'INCREASED')
-    const valueOfDecreasedType = await calculateBalanceWithCertainType(condition, 'DECREASED')
-    return valueOfIncreasedType - valueOfDecreasedType
-}
-async function calculateBalanceWithCertainType(condition, type) {
-    const conditionWithType = getConditionWithNewProperty(condition, 'type', type)
-    const value = await sumValueOfBalances(conditionWithType)
-    return value
-}
-function calculateTimeStamp(year){
+
+
+function calculateTimeStamp(year) {
     return moment(year, 'Y').format('YYYY-MM-DD HH:mm:ss');
 }
 
-function getConditionWithNewProperty(condition, property, propertyValue){
+function getConditionWithNewProperty(condition, property, propertyValue) {
     const conditionWithNewProperty = {...condition};
     conditionWithNewProperty[property] = propertyValue;
     return conditionWithNewProperty
 }
+
 async function sumValueOfBalances(condition) {
     const balance = await BalanceEvents.sum(
         'value',
@@ -87,4 +87,5 @@ async function sumValueOfBalances(condition) {
     )
     return balance
 }
-module.exports = router; 
+
+module.exports = router;
