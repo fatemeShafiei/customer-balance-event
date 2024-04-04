@@ -38,7 +38,7 @@ router.post('/:market/:customerId', async (req, res) => {
 });
 
 router.get('/:market/:customerId/:reason/:reasonTime', async (req, res) => {
-    const year = Number(req.params.reasonTime) - 1;
+    const year = Number(req.params.reasonTime);
     const yearTimeStamp = calculateTimeStamp(year);
     const nextYearTimeStamp = calculateTimeStamp(year + 1);
     const condition = {
