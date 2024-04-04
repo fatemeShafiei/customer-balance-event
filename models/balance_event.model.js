@@ -22,10 +22,6 @@ module.exports = (sequelize) => {
             type: DataTypes.DATE,
             allowNull: false
         },
-        time: {
-            type: DataTypes.DATE,
-            allowNull: false
-        },
         businessUnit: {
             type: DataTypes.STRING,
             allowNull: false
@@ -41,6 +37,6 @@ module.exports = (sequelize) => {
 
     },{
         updatedAt: false,
-        createdAt: false
+        createdAt: 'time'
     });
 };
