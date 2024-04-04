@@ -1,11 +1,16 @@
 const express = require('express');
 const router = express.Router();
 const db = require("../models");
+const {validateBalanceEvent} = require('../models/balance_event.model');
+
 const BalanceEvents = db.balanceEvents;
 const Op = require('sequelize').Op;
 
 
 router.post('/:market/:customerId', async (req, res) => {
+  const { error } = validateBalanceEvent(req.body);
+  if (error) return res.status(400).send(error.details[0].message);
+
   const randomId = (new Date()).getTime().toString(36) + Math.random().toString(36).slice(2);
   const balanceEvent = {
     id: randomId,
