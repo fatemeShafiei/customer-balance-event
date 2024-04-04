@@ -1,5 +1,7 @@
 const { DataTypes } = require('sequelize');
-module.exports = (sequelize) => {
+const Joi = require('joi');
+
+function getModel(sequelize) {
     return sequelize.define("balance_event", {
         id: {
             type: DataTypes.STRING,
@@ -39,4 +41,18 @@ module.exports = (sequelize) => {
         updatedAt: false,
         createdAt: 'time'
     });
-};
+}
+function validateBalanceEvent(balanceEvent) {
+    const schema = Joi.object({
+        reason: Joi.string().min(5).max(50).required(),
+        reasonTime: Joi.date().required(),
+        businessUnit: Joi.string().min(1).max(50).required(),
+        type: Joi.string().min(5).max(50).required(),
+        value: Joi.number().min(0).required(),
+    });
+
+    return schema.validate(balanceEvent);
+}
+exports.getModel = getModel;
+exports.validateBalanceEvent = validateBalanceEvent;
+
