@@ -33,7 +33,7 @@ function getModel(sequelize) {
             allowNull: false
         },
         value: {
-            type: DataTypes.BIGINT(11),
+            type: DataTypes.BIGINT,
             allowNull: false
         },
 
