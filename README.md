@@ -54,22 +54,82 @@ Once the dependencies are installed and the configuration is set up, you can run
 ```bash
 node index.js
 ```
-## Running tests
+
+
+
+
+
+## APIs
+
+### Create Record (POST)
+Endpoint: `http://localhost:3000/api/events/:market/:customerId`
+
+#### Description
+This API allows creating a new record in the database.
+
+#### Request
+- Method: `POST`
+- URL: `http://localhost:3000/api/events/:market/:customerId`
+- Body: 
+```json
+  {
+  "reason": String,
+  "reasonTime": Number,
+  "businessUnit": String,
+  "type": String,
+  "value": Number
+  }
+```
+
+#### Response
+- Status: `200 Created` on success
+- Body: JSON object containing the created record.
+
+#### Example
+```http
+POST http://localhost:3000/api/events/:market/:customerId/:reason/:year
+Content-Type: application/json
+
+{
+  "reason": "ATTEND_EVENT",
+  "reasonTime": 17844646535,
+  "businessUnit": "BU03",
+  "type": "INCREASED",
+  "value": 78
+}
+```
+
+### Retrieve Records (GET)
+Endpoint: `http://localhost:3000/api/events/:market/:customerId/:reason/:year`
+
+#### Description
+This API allows retrieving records from the database.
+
+#### Request
+- Method: `GET`
+- URL: ` http://localhost:3000/api/events/:market/:customerId/:reason/:year`
+
+#### Response
+- Status: `200 OK` on success
+
+
+#### Example
+```http
+GET http://localhost:3000/api/events/FI/fi.customer-03/PURCHASE/2023
+```
+
+## Running Tests
 To run tests for this application, execute the following command:
 
 ```bash
 npm test
 ```
 
-
-The application will start and listen for incoming requests on the specified port (default is 3000).
+This command will run the test suite and provide feedback on the test results.
 
 ## Contributing
 Contributions are welcome! Feel free to open an issue or submit a pull request.
 
 ## License
 This project is licensed under the [MIT License](LICENSE).
-
----
-
-Feel free to customize the README according to your specific application requirements and additional features. This is just a basic template to get you started.
+```
