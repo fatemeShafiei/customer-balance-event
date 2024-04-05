@@ -87,7 +87,7 @@ This API allows creating a new record in the database.
 
 #### Example
 ```http
-POST http://localhost:3000/api/events/:market/:customerId/:reason/:year
+POST http://localhost:3000/api/events/FI/fi.customer-03
 Content-Type: application/json
 
 {
@@ -103,7 +103,7 @@ Content-Type: application/json
 Endpoint: `http://localhost:3000/api/events/:market/:customerId/:reason/:year`
 
 #### Description
-This API allows retrieving records from the database.
+This API allows retrieving records from the database based on the parameters.
 
 #### Request
 - Method: `GET`
@@ -117,7 +117,16 @@ This API allows retrieving records from the database.
 ```http
 GET http://localhost:3000/api/events/FI/fi.customer-03/PURCHASE/2023
 ```
-
+```json
+  {
+   "customerId": "fi.customer-03",
+   "market": "FI",
+   "activity": "PURCHASE",
+   "year": "2023",
+   "openingBalance": 0,
+   "closingBalance": 5256
+}
+```
 ## Running Tests
 To run tests for this application, execute the following command:
 
