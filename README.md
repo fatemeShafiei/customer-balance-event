@@ -137,6 +137,13 @@ GET http://localhost:3000/api/events/FI/fi.customer-03/PURCHASE/2023
    "closingBalance": 5256
 }
 ```
+## Testing on Server
+
+The application is deployed on GCP. <br>
+You can access the API by:<br> 
+https://customer-balance-event-7if2mlcdwq-uc.a.run.app <br>
+In this case, instead of http://localhost:3000 use the above URL.
+
 ## Running Tests
 To run tests for this application, first add test.json file to the config director. execute the following commands:
 - In Linux and Mac run:
