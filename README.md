@@ -31,7 +31,7 @@ Before running this application, ensure you have the following installed:
 ## Configuration
 This application uses the `config` library to manage configuration settings. Configuration files are stored in the `config` directory. Default configuration settings are defined in `default.json`, and environment-specific settings can be defined in separate files (e.g., `development.json`, `production.json`).
 
-To configure the application, create a `custom-environment-variables.json` file in the `config` directory and map environment variables to configuration keys. For example:
+To configure the application, create a `default.json` file in the `config` directory and map environment variables to configuration keys. For example:
 
 ```json
 {
@@ -111,12 +111,22 @@ This API allows retrieving records from the database based on the parameters.
 
 #### Response
 - Status: `200 OK` on success
-
+```json
+  {
+   "customerId": String,
+   "market": String,
+   "activity": String,
+   "year": String,
+   "openingBalance": Number,
+   "closingBalance": Number
+}
+```
 
 #### Example
 ```http
 GET http://localhost:3000/api/events/FI/fi.customer-03/PURCHASE/2023
 ```
+#### Response
 ```json
   {
    "customerId": "fi.customer-03",
@@ -128,8 +138,16 @@ GET http://localhost:3000/api/events/FI/fi.customer-03/PURCHASE/2023
 }
 ```
 ## Running Tests
-To run tests for this application, execute the following command:
-
+To run tests for this application, first add test.json file to the config director. execute the following commands:
+- In Linux and Mac run:
+```bash
+export NODE_ENV=test
+```
+- In windows run:
+```bash
+set NODE_ENV=test
+```
+- and finally run:
 ```bash
 npm test
 ```
